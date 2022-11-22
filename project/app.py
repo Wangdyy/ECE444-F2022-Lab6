@@ -1,4 +1,5 @@
 import sqlite3
+import os
 from functools import wraps
 
 from pathlib import Path
@@ -28,6 +29,12 @@ db = SQLAlchemy(app)
 
 from project import models
 
+url = os.getenv('DATABASE_URL', f'sqlite:///{Path(basedir).joinpath(DATABASE)}')
+
+if url.startswith("postgres://"):
+    url = url.replace("postgres://", "postgresql://", 1)
+
+SQLALCHEMY_DATABASE_URI = url
 
 @app.route('/')
 def index():
