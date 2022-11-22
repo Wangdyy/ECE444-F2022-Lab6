@@ -1,22 +1,10 @@
 import pytest
-import os
 import json
 from pathlib import Path
 
 from project.app import app, db
 
 TEST_DB = "test.db"
-
-
-@pytest.fixture
-def client():
-    BASE_DIR = Path(__file__).resolve().parent.parent
-    app.config["TESTING"] = True
-    app.config["DATABASE"] = BASE_DIR.joinpath(TEST_DB)
-
-    init_db() # setup
-    yield app.test_client() # tests run here
-    init_db() # teardown
 
 
 def login(client, username, password):
@@ -61,6 +49,7 @@ def test_login_logout(client):
     rv = login(client, app.config["USERNAME"], app.config["PASSWORD"] + "x")
     assert b"Invalid password" in rv.data
 
+
 def test_delete_message(client):
     """Ensure the messages are being deleted"""
     rv = client.get("/delete/1")
@@ -70,6 +59,7 @@ def test_delete_message(client):
     rv = client.get("/delete/1")
     data = json.loads(rv.data)
     assert data["status"] == 1
+
 
 def search(client):
     response = client.get("/search/", content_type="html/text")
@@ -86,6 +76,7 @@ def client():
     db.create_all()  # setup
     yield app.test_client()  # tests run here
     db.drop_all()  # teardown
+
 
 def test_messages(client):
     """Ensure that user can post messages"""
