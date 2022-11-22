@@ -67,6 +67,11 @@ def test_delete_message(client):
     data = json.loads(rv.data)
     assert data["status"] == 1
 
+def search(client):
+    response = client.get("/search/", content_type="html/text")
+    assert response.status_code == 200
+
+
 @pytest.fixture
 def client():
     BASE_DIR = Path(__file__).resolve().parent.parent
